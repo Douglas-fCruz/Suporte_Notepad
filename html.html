@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad de Atendimentos</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+<header class="topbar">
+
+    <h1>📋 Notepad de Atendimentos</h1>
+
+    <div class="search-area">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Pesquisar nome, CPF, protocolo ou telefone..."
+        >
+    </div>
+
+</header>
+
+<main>
+
+    <!-- ===================================== -->
+    <!-- HUGGY -->
+    <!-- ===================================== -->
+
+    <section
+        class="column"
+        id="huggy-column"
+    >
+
+        <div
+            class="column-header collapsible"
+            data-target="huggy-grid"
+        >
+
+            <h2>
+                Atendimentos HUGGY
+            </h2>
+
+            <span
+                id="huggy-count"
+                class="counter"
+            >
+                0 atendimentos
+            </span>
+
+        </div>
+
+        <div
+            id="huggy-grid"
+            class="cards-grid"
+        >
+
+            <button
+                id="huggy-add-btn"
+                class="add-card-btn"
+                onclick="createCard('huggy')"
+            >
+                +
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- ===================================== -->
+    <!-- CAIXA -->
+    <!-- ===================================== -->
+
+    <section
+        class="column"
+        id="caixa-column"
+    >
+
+        <div
+            class="column-header collapsible"
+            data-target="caixa-grid"
+        >
+
+            <h2>
+                Atendimentos CAIXA
+            </h2>
+
+            <span
+                id="caixa-count"
+                class="counter"
+            >
+                0 atendimentos
+            </span>
+
+        </div>
+
+        <div
+            id="caixa-grid"
+            class="cards-grid"
+        >
+
+            <button
+                id="caixa-add-btn"
+                class="add-card-btn"
+                onclick="createCard('caixa')"
+            >
+                +
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <span>
+        Notepad de Atendimentos
+    </span>
+
+    <span id="last-save">
+        Última alteração: --
+    </span>
+
+</footer>
+
+<!-- ===================================== -->
+<!-- TEMPLATE CARD -->
+<!-- ===================================== -->
+
+<template id="cardTemplate">
+
+    <div
+        class="card"
+        draggable="true"
+    >
+
+        <div class="card-top">
+
+            <div class="card-actions">
+
+                <span class="drag-icon">
+                    ☰
+                </span>
+
+                <span
+                    class="timer"
+                    data-opened-at=""
+                >
+                    00:00:00
+                </span>
+
+            </div>
+
+            <button
+                class="delete-btn"
+                type="button"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Nome do Cliente
+            </label>
+
+            <input
+                type="text"
+                data-field="nome"
+                placeholder="Nome"
+            >
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                CPF/CNPJ
+            </label>
+
+            <input
+            type="text"
+            data-field="cpf"
+            maxlength="18"
+        >
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Protocolo
+            </label>
+
+            <input
+                type="text"
+                data-field="protocolo"
+                placeholder="12345.2026"
+            >
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Telefone
+            </label>
+
+            <input
+                type="text"
+                data-field="telefone"
+                maxlength="15"
+                placeholder="(11) 99999-9999"
+            >
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Informações
+            </label>
+
+            <textarea
+                data-field="problema"
+                rows="3"
+                placeholder="Descreva o problema"
+            ></textarea>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Finalização
+            </label>
+
+            <textarea
+                data-field="finalizacao"
+                rows="3"
+                placeholder="Descreva a finalização"
+            ></textarea>
+
+        </div>
+
+        <div class="card-footer">
+
+            <small class="created-at">
+                Criado agora
+            </small>
+
+        </div>
+
+    </div>
+
+</template>
+
+<script src="script.js"></script>
+
+</body>
+</html>
