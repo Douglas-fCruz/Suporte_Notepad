@@ -444,7 +444,7 @@ function buildCard(
         <div class="field">
 
             <label>
-                CPF
+                CPF/CNPJ
             </label>
 
             <input
@@ -488,7 +488,7 @@ function buildCard(
         <div class="field">
 
             <label>
-                Problema
+                Informações
             </label>
 
             <textarea

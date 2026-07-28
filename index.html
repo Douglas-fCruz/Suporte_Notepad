@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notepad de Atendimentos</title>
+    <title>Gestão de Chamados</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,9 +11,13 @@
 
 <header class="topbar">
 
-    <h1>📋 Notepad de Atendimentos</h1>
+    <div class="helpdesk-header">
+        <h1 class="title-helpdesk">Helpdesk</h1>
+        <p class="subtitle-helpdesk">Gestão de Chamados</p>
+    </div>
 
     <div class="search-area">
+    
         <input
             type="text"
             id="searchInput"
@@ -40,7 +44,7 @@
         >
 
             <h2>
-                Atendimentos HUGGY
+                Atendimentos HUGGY 💬
             </h2>
 
             <span
@@ -84,7 +88,7 @@
         >
 
             <h2>
-                Atendimentos CAIXA
+                Atendimentos CAIXA 📞
             </h2>
 
             <span
@@ -164,98 +168,7 @@
 
         </div>
 
-        <div class="field">
-
-            <label>
-                Nome do Cliente
-            </label>
-
-            <input
-                type="text"
-                data-field="nome"
-                placeholder="Nome"
-            >
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                CPF/CNPJ
-            </label>
-
-            <input
-            type="text"
-            data-field="cpf"
-            maxlength="18"
-        >
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Protocolo
-            </label>
-
-            <input
-                type="text"
-                data-field="protocolo"
-                placeholder="12345.2026"
-            >
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Telefone
-            </label>
-
-            <input
-                type="text"
-                data-field="telefone"
-                maxlength="15"
-                placeholder="(11) 99999-9999"
-            >
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Informações
-            </label>
-
-            <textarea
-                data-field="problema"
-                rows="3"
-                placeholder="Descreva o problema"
-            ></textarea>
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Finalização
-            </label>
-
-            <textarea
-                data-field="finalizacao"
-                rows="3"
-                placeholder="Descreva a finalização"
-            ></textarea>
-
-        </div>
-
-        <div class="card-footer">
-
-            <small class="created-at">
-                Criado agora
-            </small>
-
-        </div>
+        
 
     </div>
 

@@ -23,11 +23,51 @@ body{
    HEADER
 ========================================================= */
 
+.helpdesk-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.title-helpdesk {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #2563eb;
+    letter-spacing: -1px;
+    position: relative;
+}
+
+.title-helpdesk::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 3px;
+    margin: 14px auto 0;
+    background: #2563eb;
+    border-radius: 999px;
+}
+
+.subtitle-helpdesk {
+    margin-top: 18px;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #a8bbe0;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+}
+
 .topbar{
     background:#111827;
     border-bottom:1px solid #334155;
     padding:20px;
-    position:sticky;
     top:0;
     z-index:999;
 }
@@ -42,6 +82,8 @@ body{
     max-width:900px;
     margin:0 auto;
 }
+
+
 
 .search-area input{
     width:100%;
