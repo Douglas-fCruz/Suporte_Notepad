@@ -1,0 +1,987 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+html{
+    scroll-behavior:smooth;
+}
+
+
+body{
+
+    font-family:
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+
+    background:#0f172a;
+
+    color:#f8fafc;
+
+    min-height:100vh;
+
+}
+
+
+/* =====================================================
+   SIDEBAR MENU
+===================================================== */
+
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:-280px;
+
+    width:280px;
+
+    height:100vh;
+
+    background:#111827;
+
+    border-right:1px solid #334155;
+
+    z-index:2000;
+
+    transition:.3s;
+
+    padding:30px 20px;
+
+}
+
+
+
+.sidebar.active{
+
+    left:0;
+
+}
+
+
+
+.sidebar-title{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+
+
+.sidebar-menu{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+
+.sidebar-menu a{
+
+    text-decoration:none;
+
+    color:#f8fafc;
+
+    background:#1f2937;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    transition:.2s;
+
+}
+
+
+
+.sidebar-menu a:hover{
+
+    background:#2563eb;
+
+}
+
+
+
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.6);
+
+    z-index:1500;
+
+}
+
+
+
+.overlay.active{
+
+    display:block;
+
+}
+
+
+
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+
+.topbar{
+
+    background:#111827;
+
+    border-bottom:1px solid #334155;
+
+    padding:20px;
+
+    position:relative;
+
+}
+
+
+
+.hamburger{
+
+    position:absolute;
+
+    top:25px;
+
+    left:20px;
+
+    width:45px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+}
+
+
+
+.helpdesk-header{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:35px 20px;
+
+    text-align:center;
+
+}
+
+
+
+.title-helpdesk{
+
+    font-size:2.8rem;
+
+    color:#2563eb;
+
+}
+
+
+
+.title-helpdesk::after{
+
+    content:"";
+
+    display:block;
+
+    width:70px;
+
+    height:3px;
+
+    margin:14px auto;
+
+    background:#2563eb;
+
+}
+
+
+
+.subtitle-helpdesk{
+
+    color:#a8bbe0;
+
+    letter-spacing:.25em;
+
+    font-size:.95rem;
+
+}
+
+
+
+.search-area{
+
+    max-width:900px;
+
+    margin:auto;
+
+}
+
+
+
+.search-area input{
+
+    width:100%;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    border:1px solid #374151;
+
+    background:#1f2937;
+
+    color:white;
+
+}
+
+
+
+
+
+.global-trash-btn{
+
+    position:absolute;
+
+    right:25px;
+
+    top:25px;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    background:#ef4444;
+
+    color:white;
+
+    font-size:20px;
+
+}
+
+
+
+
+
+/* =====================================================
+ MAIN
+===================================================== */
+
+
+main{
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:30px;
+
+}
+
+
+
+.column{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:18px;
+
+    padding:20px;
+
+}
+
+
+
+.column.collapsed .cards-grid{
+
+    display:none;
+
+}
+
+
+
+
+/* =====================================================
+ COLUMN HEADER
+===================================================== */
+
+
+.column-header{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.column-header h2{
+
+    margin-bottom:8px;
+
+}
+
+
+
+.counter{
+
+    background:#2563eb;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+}
+
+
+
+
+
+/* =====================================================
+ GRID
+===================================================== */
+
+
+.cards-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,320px);
+
+    justify-content:center;
+
+    gap:32px;
+
+}
+
+
+
+
+
+/* =====================================================
+ ADD BUTTON
+===================================================== */
+
+
+.add-card-btn{
+
+    width:50px;
+
+    height:50px;
+
+    justify-self:center;
+
+    align-self:center;
+
+    
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:40px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+
+.add-card-btn:hover{
+
+    transform:scale(1.05);
+
+}
+
+
+
+
+
+/* =====================================================
+ CARD
+===================================================== */
+
+
+.card.hidden-search{
+    display:none;
+}
+
+
+.column.hidden-column{
+    display:none;
+}
+
+.card{
+
+    width:320px;
+
+    min-height:350px;
+
+    background:#111827;
+
+    border:1px solid #374151;
+
+    border-radius:16px;
+
+    padding:12px;
+
+    transition:.2s;
+
+}
+
+
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+
+
+.card.priority{
+
+    border:
+
+    2px solid
+
+    #facc15;
+
+    box-shadow:
+
+    0 0 15px
+
+    #facc15;
+
+}
+
+
+
+
+/* =====================================================
+ CARD TOP
+===================================================== */
+
+
+.card-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+
+
+.card-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+
+.drag-icon{
+
+    cursor:grab;
+
+    color:#94a3b8;
+
+}
+
+
+
+
+.priority-btn{
+
+    border:none;
+
+    background:none;
+
+    color:#94a3b8;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+}
+
+
+
+.priority-btn:hover::after{
+
+    content:"priorizar atendimento";
+
+    position:absolute;
+
+    background:#020617;
+
+    color:white;
+
+    padding:6px;
+
+    border-radius:6px;
+
+    font-size:12px;
+
+}
+
+
+
+.priority-btn.active{
+
+    color:#facc15;
+
+}
+
+
+
+.timer{
+
+    background:#16a34a;
+
+    padding:5px 8px;
+
+    border-radius:999px;
+
+    font-size:11px;
+
+}
+
+
+
+
+
+.delete-btn{
+
+    width:28px;
+
+    height:28px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#ef4444;
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* =====================================================
+ FIELDS
+===================================================== */
+
+
+.field{
+
+    display:flex;
+
+    flex-direction:column;
+
+    margin-top:10px;
+
+}
+
+
+
+.field label{
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+
+
+.field input,
+
+.field textarea{
+
+    width:100%;
+
+    background:#1f2937;
+
+    border:1px solid #374151;
+
+    color:white;
+
+    padding:8px;
+
+    border-radius:8px;
+
+}
+
+
+
+.field textarea{
+
+    min-height:60px;
+
+    resize:none;
+
+}
+
+
+
+
+
+/* =====================================================
+ OS
+===================================================== */
+
+
+.os-selector{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+
+.os-btn{
+
+    flex:1;
+
+    padding:8px;
+
+    border:none;
+
+    cursor:pointer;
+
+    border-radius:8px;
+
+    background:#374151;
+
+    color:white;
+
+}
+
+
+
+.os-btn.active{
+
+    background:#2563eb;
+
+}
+
+
+
+.os-info{
+
+    display:none;
+
+}
+
+
+
+
+
+/* =====================================================
+ HISTORY
+===================================================== */
+
+
+.history-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.history-trash-btn{
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#ef4444;
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+
+
+.history-card textarea{
+
+    color:#cbd5e1;
+
+}
+
+
+/* =========================================================
+   HISTÓRICO - CAMPOS READONLY
+========================================================= */
+
+
+.history-card input,
+.history-card textarea{
+
+    background:#1f2937;
+
+    color:#f8fafc;
+
+    border:1px solid #374151;
+
+}
+
+
+
+.history-card textarea{
+
+    scrollbar-width:thin;
+
+    scrollbar-color:#475569 #1f2937;
+
+}
+
+
+
+/* =========================================================
+   SCROLLBAR DOS CARDS DO HISTÓRICO
+========================================================= */
+
+
+.history-card textarea::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+
+
+.history-card textarea::-webkit-scrollbar-track{
+
+    background:#1f2937;
+
+    border-radius:10px;
+
+}
+
+
+
+.history-card textarea::-webkit-scrollbar-thumb{
+
+    background:#475569;
+
+    border-radius:999px;
+
+}
+
+
+
+.history-card textarea::-webkit-scrollbar-thumb:hover{
+
+    background:#64748b;
+
+}
+
+
+
+/* =========================================================
+   HISTÓRICO - CARD
+========================================================= */
+
+
+.history-card{
+
+    background:#111827;
+
+    border:1px solid #374151;
+
+}
+
+
+
+.history-card label{
+
+    color:#f8fafc;
+
+}
+
+
+
+.history-card small{
+
+    color:#94a3b8;
+
+}
+
+
+/* =====================================================
+ FOOTER
+===================================================== */
+
+
+footer{
+
+    background:#111827;
+
+    border-top:1px solid #334155;
+
+    padding:15px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:25px;
+
+    flex-wrap:wrap;
+
+}
+
+
+
+
+
+/* =====================================================
+ RESPONSIVE
+===================================================== */
+
+
+@media(max-width:1200px){
+
+
+.cards-grid{
+
+    grid-template-columns:repeat(3,260px);
+
+}
+
+
+}
+
+
+
+@media(max-width:900px){
+
+
+.cards-grid{
+
+    grid-template-columns:repeat(2,260px);
+
+}
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+.cards-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+
+.card{
+
+    width:100%;
+
+}
+
+
+}

@@ -2,253 +2,705 @@
    CONFIG
 ========================================================= */
 
-const STORAGE_KEY = "NOTEPAD_ATENDIMENTOS_V5";
+
+const STORAGE_KEY = "NOTEPAD_ATENDIMENTOS_V7";
+
+
 
 let database = {
-    huggy: [],
-    caixa: []
+
+
+    atendimento:{
+
+
+        huggy: [],
+
+
+        caixa: []
+
+
+    },
+
+
+    historico:{
+
+
+        huggy: [],
+
+
+        caixa: []
+
+
+    }
+
+
 };
 
+
+
+
+
 let draggedCard = null;
+
 let draggedFromColumn = null;
+
+
+
+
+
+
+
+
 
 /* =========================================================
    INIT
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+
+document.addEventListener(
+
+"DOMContentLoaded",
+
+()=>{
+
 
     loadData();
 
+
     registerSearch();
+
 
     registerCollapsibles();
 
+
+    registerMenu();
+
+
     startTimerUpdater();
 
-});
+
+
+
+    enableDrop(
+
+        document.getElementById(
+            "huggy-grid"
+        ),
+
+        "huggy"
+
+    );
+
+
+
+
+    enableDrop(
+
+        document.getElementById(
+            "caixa-grid"
+        ),
+
+        "caixa"
+
+    );
+
+
+
+}
+
+);
+
+
+
+
+
+
+
+
 
 /* =========================================================
    STORAGE
 ========================================================= */
 
+
 function saveData(){
 
+
     localStorage.setItem(
+
         STORAGE_KEY,
+
         JSON.stringify(database)
+
     );
+
 
     updateLastSave();
 
+
+
 }
+
+
+
+
+
+
+
 
 function loadData(){
 
+
+
     const saved =
+
         localStorage.getItem(
             STORAGE_KEY
         );
 
+
+
+
     if(saved){
 
+
+
         database =
+
             JSON.parse(saved);
+
+
 
     }
 
+
+
     renderAll();
+
+
 
 }
 
+
+
+
+
+
+
 function updateLastSave(){
 
+
+
     const element =
+
         document.getElementById(
             "last-save"
         );
 
-    if(!element) return;
+
+
+    if(!element)
+
+        return;
+
+
+
+
 
     element.innerText =
+
         "Última alteração: " +
-        new Date().toLocaleString(
+
+        new Date()
+
+        .toLocaleString(
             "pt-BR"
         );
 
+
+
 }
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+
+function registerMenu(){
+
+
+
+    const button =
+
+        document.getElementById(
+            "menu-btn"
+        );
+
+
+
+    const sidebar =
+
+        document.getElementById(
+            "sidebar"
+        );
+
+
+
+    const overlay =
+
+        document.getElementById(
+            "overlay"
+        );
+
+
+
+
+    if(!button)
+
+        return;
+
+
+
+
+
+    button.onclick = ()=>{
+
+
+        sidebar.classList.toggle(
+            "active"
+        );
+
+
+
+        overlay.classList.toggle(
+            "active"
+        );
+
+
+
+    };
+
+
+
+
+
+
+    if(overlay){
+
+
+        overlay.onclick = ()=>{
+
+
+            sidebar.classList.remove(
+                "active"
+            );
+
+
+
+            overlay.classList.remove(
+                "active"
+            );
+
+
+
+        };
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
 
 /* =========================================================
    CARD MODEL
 ========================================================= */
 
-function cpfCnpjMask(value){
-
-    value = value.replace(/\D/g,'');
-
-    if(value.length <= 11){
-
-        value = value.replace(
-            /(\d{3})(\d)/,
-            '$1.$2'
-        );
-
-        value = value.replace(
-            /(\d{3})(\d)/,
-            '$1.$2'
-        );
-
-        value = value.replace(
-            /(\d{3})(\d{1,2})$/,
-            '$1-$2'
-        );
-
-    }else{
-
-        value = value.replace(
-            /^(\d{2})(\d)/,
-            '$1.$2'
-        );
-
-        value = value.replace(
-            /^(\d{2})\.(\d{3})(\d)/,
-            '$1.$2.$3'
-        );
-
-        value = value.replace(
-            /\.(\d{3})(\d)/,
-            '.$1/$2'
-        );
-
-        value = value.replace(
-            /(\d{4})(\d)/,
-            '$1-$2'
-        );
-
-    }
-
-    return value;
-
-}
-
-function phoneMask(value){
-
-    value = value.replace(/\D/g,'');
-
-    if(value.length <= 10){
-
-        value = value.replace(
-            /^(\d{2})(\d)/,
-            '($1) $2'
-        );
-
-        value = value.replace(
-            /(\d{4})(\d)/,
-            '$1-$2'
-        );
-
-    }else{
-
-        value = value.replace(
-            /^(\d{2})(\d)/,
-            '($1) $2'
-        );
-
-        value = value.replace(
-            /(\d{5})(\d)/,
-            '$1-$2'
-        );
-
-    }
-
-    return value;
-
-}
 
 function createEmptyCard(){
 
+
+
     return {
 
+
         id:
+
             crypto.randomUUID(),
 
-        Nome: "",
-        CPF: "",
-        Protocolo: "",
-        Telefone: "",
 
-        Informações: "",
-        Finalizacao: "",
+
+        nome:"",
+
+
+
+        cpf:"",
+
+
+
+        protocolo:"",
+
+
+
+        telefone:"",
+
+
+
+
+        relato:"",
+
+
+
+
+        agendar_os:false,
+
+
+
+
+        os_info:"",
+
+
+
+
+        prioridade:false,
+
+
+
 
         created_at:
+
             new Date()
-            .toLocaleString("pt-BR"),
+
+            .toLocaleString(
+                "pt-BR"
+            ),
+
+
+
 
         opened_at:
+
             Date.now()
+
+
 
     };
 
+
+
 }
 
+
+
+
+
+
+
+
+
 /* =========================================================
-   CREATE
+   CREATE CARD
 ========================================================= */
+
 
 function createCard(column){
 
-    database[column].push(
+
+
+    database.atendimento[column]
+
+    .push(
+
         createEmptyCard()
+
     );
 
+
+
     saveData();
+
+
 
     renderAll();
 
+
+
 }
+
+
+
+
+
+
+
+
 
 /* =========================================================
-   DELETE
+   DELETE TO HISTORY
 ========================================================= */
 
+
 function removeCard(
+
     column,
+
     id
+
 ){
 
-    database[column] =
-        database[column].filter(
-            card =>
-            card.id !== id
+
+
+    const card =
+
+        database.atendimento[column]
+
+        .find(
+
+            item =>
+
+            item.id === id
+
         );
+
+
+
+    if(!card)
+
+        return;
+
+
+
+
+
+    database.historico[column]
+
+    .push(
+
+        card
+
+    );
+
+
+
+
+
+    database.atendimento[column]
+
+    =
+
+    database.atendimento[column]
+
+    .filter(
+
+        item =>
+
+        item.id !== id
+
+    );
+
+
+
+
 
     saveData();
 
+
+
     renderAll();
 
+
+
 }
+
+
+
+
+
+
+
+
 
 /* =========================================================
    UPDATE FIELD
 ========================================================= */
 
+
 function updateField(
+
     column,
+
     id,
+
     field,
+
     value
+
 ){
 
+
+
     const card =
-        database[column].find(
-            c => c.id === id
+
+        database.atendimento[column]
+
+        .find(
+
+            item =>
+
+            item.id === id
+
         );
 
-    if(!card) return;
+
+
+    if(!card)
+
+        return;
+
+
 
     card[field] = value;
 
+
+
     saveData();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   PRIORITY
+========================================================= */
+
+
+function togglePriority(
+
+    column,
+
+    id
+
+){
+
+
+
+    const card =
+
+        database.atendimento[column]
+
+        .find(
+
+            item =>
+
+            item.id === id
+
+        );
+
+
+
+    if(!card)
+
+        return;
+
+
+
+    card.prioridade =
+
+        !card.prioridade;
+
+
+
+    saveData();
+
+
+
+    renderAll();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   AGENDAR O.S
+========================================================= */
+
+
+function toggleOS(
+
+    column,
+
+    id
+
+){
+
+
+
+    const card =
+
+        database.atendimento[column]
+
+        .find(
+
+            item =>
+
+            item.id === id
+
+        );
+
+
+
+    if(!card)
+
+        return;
+
+
+
+
+    card.agendar_os =
+
+        !card.agendar_os;
+
+
+
+    saveData();
+
+
+
+    renderAll();
+
+
 
 }
 
@@ -256,845 +708,1908 @@ function updateField(
    TIMER
 ========================================================= */
 
+
 function formatDuration(ms){
 
+
     const totalSeconds =
-        Math.floor(ms / 1000);
+
+        Math.floor(
+            ms / 1000
+        );
+
+
 
     const hours =
+
         String(
+
             Math.floor(
                 totalSeconds / 3600
             )
-        ).padStart(2,"0");
+
+        )
+
+        .padStart(
+            2,
+            "0"
+        );
+
+
 
     const minutes =
+
         String(
+
             Math.floor(
+
                 (totalSeconds % 3600) / 60
+
             )
-        ).padStart(2,"0");
+
+        )
+
+        .padStart(
+            2,
+            "0"
+        );
+
+
 
     const seconds =
+
         String(
+
             totalSeconds % 60
-        ).padStart(2,"0");
+
+        )
+
+        .padStart(
+            2,
+            "0"
+        );
+
+
 
     return `${hours}:${minutes}:${seconds}`;
 
+
 }
+
+
+
+
+
+
 
 function startTimerUpdater(){
 
-    setInterval(() => {
 
-        document
+
+    setInterval(
+
+        ()=>{
+
+
+
+            document
+
             .querySelectorAll(
                 ".timer[data-opened-at]"
             )
-            .forEach(timer => {
 
-                const openedAt =
-                    Number(
-                        timer.dataset.openedAt
-                    );
+            .forEach(
 
-                if(!openedAt) return;
+                timer=>{
 
-                timer.innerText =
-                    formatDuration(
-                        Date.now() - openedAt
-                    );
 
-            });
+                    const opened =
 
-    },1000);
+                        Number(
+                            timer.dataset.openedAt
+                        );
+
+
+
+                    if(!opened)
+
+                        return;
+
+
+
+                    timer.innerText =
+
+                        formatDuration(
+
+                            Date.now() - opened
+
+                        );
+
+
+
+                }
+
+            );
+
+
+
+        },
+
+        1000
+
+    );
+
+
 
 }
+
+
+
+
+
+
+
+
 
 /* =========================================================
    RENDER
 ========================================================= */
 
+
 function renderAll(){
 
-    renderColumn(
-        "huggy",
-        "huggy-grid",
-        "huggy-add-btn"
-    );
+
 
     renderColumn(
-        "caixa",
-        "caixa-grid",
-        "caixa-add-btn"
+
+        "huggy",
+
+        "huggy-grid",
+
+        "huggy-add-btn"
+
     );
+
+
+
+
+
+    renderColumn(
+
+        "caixa",
+
+        "caixa-grid",
+
+        "caixa-add-btn"
+
+    );
+
+
+
+
 
     updateCounters();
 
+
+
 }
 
+
+
+
+
+
+
+
+
 function renderColumn(
+
     column,
+
     gridId,
-    addButtonId
+
+    buttonId
+
 ){
 
+
+
     const grid =
+
         document.getElementById(
             gridId
         );
 
-    const addButton =
+
+
+    const button =
+
         document.getElementById(
-            addButtonId
+            buttonId
         );
 
-    if(!grid) return;
+
+
+
+    if(!grid)
+
+        return;
+
+
+
+
 
     grid.innerHTML = "";
 
-    database[column].forEach(card => {
 
-        const cardElement =
-            buildCard(
-                card,
-                column
+
+
+
+    database.atendimento[column]
+
+    .forEach(
+
+        card=>{
+
+
+            grid.appendChild(
+
+                buildCard(
+
+                    card,
+
+                    column
+
+                )
+
             );
 
+
+
+        }
+
+    );
+
+
+
+
+
+
+    if(button){
+
+
         grid.appendChild(
-            cardElement
+            button
         );
 
-    });
-
-    if(addButton){
-
-        grid.appendChild(
-            addButton
-        );
 
     }
 
+
+
 }
+
+
+
+
+
+
+
+
 
 /* =========================================================
    BUILD CARD
 ========================================================= */
 
+
 function buildCard(
+
     card,
+
     column
+
 ){
 
-    const div =
-        document.createElement("div");
 
-    div.className = "card";
+
+    const div =
+
+        document.createElement(
+            "div"
+        );
+
+
+
+
+    div.className =
+
+        "card";
+
+
+
+
+    if(card.prioridade){
+
+
+        div.classList.add(
+            "priority"
+        );
+
+
+    }
+
+
+
+
 
     div.draggable = true;
 
-    div.dataset.id = card.id;
+
+
+    div.dataset.id =
+
+        card.id;
+
+
+
+
+
 
     div.innerHTML = `
 
-        <div class="card-top">
 
-            <div class="card-actions">
 
-                <span class="drag-icon">
-                    ☰
-                </span>
+<div class="card-top">
 
-                <span
-                    class="timer"
-                    data-opened-at="${card.opened_at}"
-                >
-                    ${formatDuration(
-                        Date.now() -
-                        card.opened_at
-                    )}
-                </span>
 
-            </div>
+<div class="card-actions">
 
-            <button
-                class="delete-btn"
-                type="button"
-            >
-                ✕
-            </button>
 
-        </div>
 
-        <div class="field">
+<span class="drag-icon">
+☰
+</span>
 
-            <label>
-                Nome do Cliente
-            </label>
 
-            <input
-                type="text"
-                data-field="nome"
-                value="${escapeHtml(card.nome)}"
-            >
 
-        </div>
 
-        <div class="field">
+<button
 
-            <label>
-                CPF/CNPJ
-            </label>
+class="priority-btn ${card.prioridade ? "active":""}"
 
-            <input
-                type="text"
-                maxlength="14"
-                data-field="cpf"
-                value="${escapeHtml(card.cpf)}"
-            >
+title="priorizar atendimento"
 
-        </div>
+>
 
-        <div class="field">
+${card.prioridade ? "★":"☆"}
 
-            <label>
-                Protocolo
-            </label>
+</button>
 
-            <input
-                type="text"
-                data-field="protocolo"
-                value="${escapeHtml(card.protocolo)}"
-            >
 
-        </div>
 
-        <div class="field">
 
-            <label>
-                Telefone
-            </label>
+<span
 
-            <input
-                type="text"
-                maxlength="15"
-                data-field="telefone"
-                value="${escapeHtml(card.telefone)}"
-            >
+class="timer"
 
-        </div>
+data-opened-at="${card.opened_at}"
 
-        <div class="field">
+>
 
-            <label>
-                Informações
-            </label>
+${formatDuration(
 
-            <textarea
-                data-field="problema"
-            >${escapeHtml(card.problema)}</textarea>
+Date.now() - card.opened_at
 
-        </div>
+)}
 
-        <div class="field">
+</span>
 
-            <label>
-                Finalização
-            </label>
 
-            <textarea
-                data-field="finalizacao"
-            >${escapeHtml(card.finalizacao)}</textarea>
 
-        </div>
+</div>
 
-        <div class="card-footer">
 
-            <small class="created-at">
-                ${card.created_at}
-            </small>
 
-        </div>
 
-    `;
+<button
 
-    div
-        .querySelector(
-            ".delete-btn"
-        )
-        .addEventListener(
-            "click",
-            () => {
+class="delete-btn"
 
-                removeCard(
-                    column,
-                    card.id
-                );
+type="button"
 
-            }
-        );
+>
 
-    div
-        .querySelectorAll(
-            "input, textarea"
-        )
-        .forEach(field => {
+✕
 
-            field.addEventListener(
-            "input",
-            e => {
+</button>
 
-                let value =
-                    e.target.value;
 
-                const fieldName =
-                    e.target.dataset.field;
 
-                if(fieldName === "cpf"){
+</div>
 
-                    value =
-                        cpfCnpjMask(value);
 
-                    e.target.value =
-                        value;
 
-                }
 
-                if(fieldName === "telefone"){
 
-                    value =
-                        phoneMask(value);
 
-                    e.target.value =
-                        value;
 
-                }
+<div class="field">
 
-                updateField(
-                    column,
-                    card.id,
-                    fieldName,
-                    value
-                );
 
-            }
-        );
+<label>
 
-        });
+Nome do Cliente
 
-    enableDrag(
-        div,
-        card.id,
-        column
+</label>
+
+
+
+<input
+
+data-field="nome"
+
+value="${escapeHtml(card.nome)}"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="field">
+
+
+<label>
+
+CPF/CNPJ
+
+</label>
+
+
+
+<input
+
+data-field="cpf"
+
+value="${escapeHtml(card.cpf)}"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="field">
+
+
+<label>
+
+Protocolo
+
+</label>
+
+
+
+<input
+
+data-field="protocolo"
+
+value="${escapeHtml(card.protocolo)}"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="field">
+
+
+<label>
+
+Telefone
+
+</label>
+
+
+
+<input
+
+data-field="telefone"
+
+value="${escapeHtml(card.telefone)}"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="field">
+
+
+<label>
+
+Relato/Informações
+
+</label>
+
+
+
+
+<textarea
+
+data-field="relato"
+
+>${escapeHtml(card.relato)}</textarea>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="field">
+
+
+<label>
+
+Agendar O.S?
+
+</label>
+
+
+
+
+<div class="os-selector">
+
+
+
+<button
+
+class="os-btn ${!card.agendar_os ? "active":""}"
+
+data-value="false"
+
+>
+
+Não
+
+</button>
+
+
+
+
+<button
+
+class="os-btn ${card.agendar_os ? "active":""}"
+
+data-value="true"
+
+>
+
+Sim
+
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div
+
+class="field os-info"
+
+style="display:${card.agendar_os ? "flex":"none"}"
+
+>
+
+
+<label>
+
+Informação da O.S
+
+</label>
+
+
+
+<textarea
+
+data-field="os_info"
+
+>${escapeHtml(card.os_info)}</textarea>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="card-footer">
+
+
+<small>
+
+${card.created_at}
+
+</small>
+
+
+
+</div>
+
+
+
+
+`;
+
+
+
+
+
+
+
+
+
+/* DELETE */
+
+
+div
+
+.querySelector(
+".delete-btn"
+)
+
+.onclick = ()=>{
+
+
+    removeCard(
+
+        column,
+
+        card.id
+
     );
 
-    return div;
+
+};
+
+
+
+
+
+
+
+
+
+/* PRIORITY */
+
+
+div
+
+.querySelector(
+".priority-btn"
+)
+
+.onclick = ()=>{
+
+
+    togglePriority(
+
+        column,
+
+        card.id
+
+    );
+
+
+};
+
+
+
+
+
+
+
+
+
+/* O.S BUTTON */
+
+
+div
+
+.querySelectorAll(
+".os-btn"
+)
+
+.forEach(
+
+button=>{
+
+
+    button.onclick = ()=>{
+
+
+        toggleOS(
+
+            column,
+
+            card.id
+
+        );
+
+
+    };
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+/* INPUTS */
+
+
+div
+
+.querySelectorAll(
+"input, textarea"
+)
+
+.forEach(
+
+field=>{
+
+
+    field.oninput = event=>{
+
+
+        updateField(
+
+            column,
+
+            card.id,
+
+            event.target.dataset.field,
+
+            event.target.value
+
+        );
+
+
+    };
+
+
+
+}
+
+);
+
+
+
+
+
+
+enableDrag(
+
+    div,
+
+    card.id,
+
+    column
+
+);
+
+
+
+
+
+
+return div;
+
+
 
 }
 
 /* =========================================================
-   DRAG & DROP
+   DRAG AND DROP
 ========================================================= */
 
+
 function enableDrag(
+
     element,
-    cardId,
+
+    id,
+
     column
+
 ){
 
+
+
     element.addEventListener(
+
         "dragstart",
-        () => {
 
-            draggedCard =
-                cardId;
+        ()=>{
 
-            draggedFromColumn =
-                column;
+
+            draggedCard = id;
+
+
+            draggedFromColumn = column;
+
+
 
             element.classList.add(
                 "dragging"
             );
 
+
         }
+
     );
 
+
+
+
+
+
+
     element.addEventListener(
+
         "dragend",
-        () => {
+
+        ()=>{
+
 
             element.classList.remove(
                 "dragging"
             );
 
+
         }
+
     );
+
+
 
 }
 
+
+
+
+
+
+
+
+
 function enableDrop(
+
     container,
+
     destinationColumn
+
 ){
 
-    if(!container) return;
+
+
+    if(!container)
+
+        return;
+
+
+
+
 
     container.addEventListener(
-        "dragover",
-        e => {
 
-            e.preventDefault();
+        "dragover",
+
+        event=>{
+
+
+            event.preventDefault();
+
 
         }
+
     );
 
+
+
+
+
+
     container.addEventListener(
+
         "drop",
-        e => {
 
-            e.preventDefault();
+        ()=>{
+
+
 
             if(
+
                 !draggedCard ||
+
                 !draggedFromColumn
-            ){
+
+            )
+
                 return;
-            }
+
+
+
+
+
 
             if(
+
                 draggedFromColumn ===
+
                 destinationColumn
-            ){
+
+            )
+
                 return;
-            }
+
+
+
+
+
+
+
 
             const card =
-                database[
-                    draggedFromColumn
-                ].find(
-                    c =>
-                    c.id === draggedCard
+
+                database.atendimento[draggedFromColumn]
+
+                .find(
+
+                    item =>
+
+                    item.id === draggedCard
+
                 );
 
-            if(!card) return;
 
-            database[
-                draggedFromColumn
-            ] =
-                database[
-                    draggedFromColumn
-                ].filter(
-                    c =>
-                    c.id !== draggedCard
-                );
 
-            database[
-                destinationColumn
-            ].push(card);
+
+
+
+            if(!card)
+
+                return;
+
+
+
+
+
+
+
+            database.atendimento[draggedFromColumn]
+
+            =
+
+            database.atendimento[draggedFromColumn]
+
+            .filter(
+
+                item =>
+
+                item.id !== draggedCard
+
+            );
+
+
+
+
+
+
+
+            database.atendimento[destinationColumn]
+
+            .push(card);
+
+
+
+
+
+
+
 
             saveData();
 
+
             renderAll();
 
+
+
+
+
+            draggedCard = null;
+
+
+            draggedFromColumn = null;
+
+
+
+
         }
+
     );
+
+
 
 }
 
-/* =========================================================
-   ENABLE DROP AREAS
-========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
 
-        enableDrop(
-            document.getElementById(
-                "huggy-grid"
-            ),
-            "huggy"
-        );
 
-        enableDrop(
-            document.getElementById(
-                "caixa-grid"
-            ),
-            "caixa"
-        );
 
-    }
-);
+
+
+
 
 /* =========================================================
    COUNTERS
 ========================================================= */
 
+
 function updateCounters(){
 
-    const huggyCount =
+
+
+    const huggy =
+
         document.getElementById(
             "huggy-count"
         );
 
-    const caixaCount =
+
+
+    const caixa =
+
         document.getElementById(
             "caixa-count"
         );
 
-    if(huggyCount){
 
-        huggyCount.innerText =
-            `${database.huggy.length} atendimentos`;
+
+
+
+
+
+    if(huggy){
+
+
+        huggy.innerText =
+
+        `${database.atendimento.huggy.length} atendimentos`;
+
+
 
     }
 
-    if(caixaCount){
 
-        caixaCount.innerText =
-            `${database.caixa.length} atendimentos`;
+
+
+
+
+    if(caixa){
+
+
+        caixa.innerText =
+
+        `${database.atendimento.caixa.length} atendimentos`;
+
+
 
     }
+
+
 
 }
 
+
+
+
+
+
+
+
+
 /* =========================================================
-   COLLAPSIBLE
+   COLLAPSE
 ========================================================= */
+
 
 function registerCollapsibles(){
 
+
+
     document
-        .querySelectorAll(
-            ".collapsible"
-        )
-        .forEach(header => {
 
-            header.addEventListener(
-                "click",
-                () => {
+    .querySelectorAll(
+        ".collapsible"
+    )
 
-                    const column =
-                        header.closest(
-                            ".column"
-                        );
+    .forEach(
 
-                    column.classList.toggle(
-                        "collapsed"
+        header=>{
+
+
+
+            header.onclick = ()=>{
+
+
+
+                const column =
+
+                    header.closest(
+                        ".column"
                     );
 
-                }
-            );
 
-        });
+
+
+
+                column.classList.toggle(
+                    "collapsed"
+                );
+
+
+
+
+            };
+
+
+
+        }
+
+    );
+
+
 
 }
+
+
+
+
+
+
+
+
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
+
 function registerSearch(){
 
+
     const input =
+
         document.getElementById(
             "searchInput"
         );
 
-    if(!input) return;
+
+
+    if(!input)
+
+        return;
+
+
+
+
 
     input.addEventListener(
+
         "input",
-        () => {
+
+        ()=>{
+
+
 
             const search =
+
                 input.value
-                .trim()
-                .toLowerCase();
+
+                .toLowerCase()
+
+                .trim();
+
+
+
+
 
             const huggyColumn =
+
                 document.getElementById(
                     "huggy-column"
                 );
 
+
+
+
             const caixaColumn =
+
                 document.getElementById(
                     "caixa-column"
                 );
 
-            let huggyHasResults =
-                false;
 
-            let caixaHasResults =
-                false;
+
+
+
+            let huggyFound = false;
+
+            let caixaFound = false;
+
+
+
+
+
+
+
 
             document
-                .querySelectorAll(
-                    "#huggy-grid .card"
-                )
-                .forEach(card => {
 
-                    const values = [];
+            .querySelectorAll(
+                "#huggy-grid .card"
+            )
+
+            .forEach(
+
+                card=>{
+
+
+
+                    let text = "";
+
+
+
+
 
                     card
-                        .querySelectorAll(
-                            "input, textarea"
-                        )
-                        .forEach(field => {
 
-                            values.push(
-                                field.value
-                                    .toLowerCase()
-                            );
+                    .querySelectorAll(
+                        "input, textarea"
+                    )
 
-                        });
+                    .forEach(
 
-                    const text =
-                        values.join(" ");
+                        field=>{
+
+
+                            text +=
+
+                            " " +
+
+                            field.value
+
+                            .toLowerCase();
+
+
+
+                        }
+
+                    );
+
+
+
+
+
 
                     const match =
+
                         text.includes(
                             search
                         );
 
+
+
+
+
+
+
                     card.classList.toggle(
+
                         "hidden-search",
+
                         !match
+
                     );
+
+
+
+
+
 
                     if(match){
 
-                        huggyHasResults =
-                            true;
 
-                        huggyColumn.classList.remove(
-                            "collapsed"
-                        );
+                        huggyFound = true;
+
 
                     }
 
-                });
+
+
+                }
+
+            );
+
+
+
+
+
+
+
+
+
 
             document
-                .querySelectorAll(
-                    "#caixa-grid .card"
-                )
-                .forEach(card => {
 
-                    const values = [];
+            .querySelectorAll(
+                "#caixa-grid .card"
+            )
+
+            .forEach(
+
+                card=>{
+
+
+
+                    let text = "";
+
+
+
+
 
                     card
-                        .querySelectorAll(
-                            "input, textarea"
-                        )
-                        .forEach(field => {
 
-                            values.push(
-                                field.value
-                                    .toLowerCase()
-                            );
+                    .querySelectorAll(
+                        "input, textarea"
+                    )
 
-                        });
+                    .forEach(
 
-                    const text =
-                        values.join(" ");
+                        field=>{
+
+
+                            text +=
+
+                            " " +
+
+                            field.value
+
+                            .toLowerCase();
+
+
+
+                        }
+
+                    );
+
+
+
+
+
+
 
                     const match =
+
                         text.includes(
                             search
                         );
 
+
+
+
+
+
+
                     card.classList.toggle(
+
                         "hidden-search",
+
                         !match
+
                     );
+
+
+
+
+
+
 
                     if(match){
 
-                        caixaHasResults =
-                            true;
 
-                        caixaColumn.classList.remove(
-                            "collapsed"
-                        );
+                        caixaFound = true;
+
 
                     }
 
-                });
+
+
+
+                }
+
+            );
+
+
+
+
+
+
+
+
+
+            /*
+                PESQUISA VAZIA
+            */
 
             if(search === ""){
+
 
                 huggyColumn.classList.remove(
                     "hidden-column"
                 );
 
+
                 caixaColumn.classList.remove(
                     "hidden-column"
                 );
 
+
+
                 document
-                    .querySelectorAll(
-                        ".card"
-                    )
-                    .forEach(card => {
+
+                .querySelectorAll(
+                    ".card"
+                )
+
+                .forEach(
+
+                    card=>{
+
 
                         card.classList.remove(
                             "hidden-search"
                         );
 
-                    });
+
+                    }
+
+                );
+
+
 
                 return;
 
+
             }
 
+
+
+
+
+
+
+
+
+            /*
+                ESCONDE COLUNAS SEM RESULTADO
+            */
+
+
             huggyColumn.classList.toggle(
+
                 "hidden-column",
-                !huggyHasResults
+
+                !huggyFound
+
             );
+
+
+
+
 
             caixaColumn.classList.toggle(
+
                 "hidden-column",
-                !caixaHasResults
+
+                !caixaFound
+
             );
 
-        });
+
+
+
+
+        }
+
+    );
+
 
 }
+
+
+
+
+
+/* =========================================================
+   CPF / CNPJ MASK
+========================================================= */
+
+
+function cpfCnpjMask(value){
+
+
+
+    value =
+
+        value.replace(
+            /\D/g,
+            ""
+        );
+
+
+
+
+
+    if(value.length <= 11){
+
+
+
+        value = value.replace(
+
+            /(\d{3})(\d)/,
+
+            "$1.$2"
+
+        );
+
+
+
+
+        value = value.replace(
+
+            /(\d{3})(\d)/,
+
+            "$1.$2"
+
+        );
+
+
+
+
+
+        value = value.replace(
+
+            /(\d{3})(\d{1,2})$/,
+
+            "$1-$2"
+
+        );
+
+
+
+    }
+
+
+
+
+
+    return value;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function phoneMask(value){
+
+
+
+    value =
+
+        value.replace(
+            /\D/g,
+            ""
+        );
+
+
+
+
+
+    if(value.length <= 10){
+
+
+
+        value = value.replace(
+
+            /^(\d{2})(\d)/,
+
+            "($1) $2"
+
+        );
+
+
+
+
+        value = value.replace(
+
+            /(\d{4})(\d)/,
+
+            "$1-$2"
+
+        );
+
+
+
+    }
+
+    else{
+
+
+
+        value = value.replace(
+
+            /^(\d{2})(\d)/,
+
+            "($1) $2"
+
+        );
+
+
+
+
+        value = value.replace(
+
+            /(\d{5})(\d)/,
+
+            "$1-$2"
+
+        );
+
+
+
+    }
+
+
+
+
+
+    return value;
+
+
+
+}
+
+
+
+
+
+
+
+
 
 /* =========================================================
    SECURITY
 ========================================================= */
 
+
 function escapeHtml(text){
 
+
+
     if(
+
         text === null ||
+
         text === undefined
-    ){
+
+    )
+
         return "";
-    }
+
+
+
+
+
 
     return String(text)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+
+    .replace(
+
+        /&/g,
+
+        "&amp;"
+
+    )
+
+    .replace(
+
+        /</g,
+
+        "&lt;"
+
+    )
+
+    .replace(
+
+        />/g,
+
+        "&gt;"
+
+    )
+
+    .replace(
+
+        /"/g,
+
+        "&quot;"
+
+    )
+
+    .replace(
+
+        /'/g,
+
+        "&#039;"
+
+    );
+
+
 
 }
 
-/* =========================================================
-   INITIAL TIMER REFRESH
-========================================================= */
 
-setTimeout(() => {
 
-    document
-        .querySelectorAll(
-            ".timer[data-opened-at]"
-        )
-        .forEach(timer => {
 
-            const openedAt =
-                Number(
-                    timer.dataset.openedAt
-                );
 
-            if(!openedAt) return;
 
-            timer.innerText =
-                formatDuration(
-                    Date.now() -
-                    openedAt
-                );
 
-        });
 
-},100);
 
 /* =========================================================
-   READY
+   GLOBAL INPUT MASK
 ========================================================= */
 
-console.log(
-    "Notepad carregado com sucesso."
-);
 
-function mascaraCPF(input) {
-  // Remove tudo que não for dígito
-  let valor = input.value.replace(/\D/g, "");
-  
-  // Aplica a máscara do CPF (000.000.000-00)
-  valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-  valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-  valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  
-  // Atualiza o valor do input
-  input.value = valor;
-}
+document.addEventListener(
 
-function cpfCnpjMask(value){
+"input",
 
-    value = value.replace(/\D/g,'');
+event=>{
 
-    if(value.length <= 11){
 
-        value = value.replace(
-            /(\d{3})(\d)/,
-            '$1.$2'
-        );
 
-        value = value.replace(
-            /(\d{3})(\d)/,
-            '$1.$2'
-        );
+    if(
 
-        value = value.replace(
-            /(\d{3})(\d{1,2})$/,
-            '$1-$2'
-        );
+        event.target.dataset.field === "cpf"
 
-    }else{
+    ){
 
-        value = value.replace(
-            /^(\d{2})(\d)/,
-            '$1.$2'
-        );
 
-        value = value.replace(
-            /^(\d{2})\.(\d{3})(\d)/,
-            '$1.$2.$3'
-        );
+        event.target.value =
 
-        value = value.replace(
-            /\.(\d{3})(\d)/,
-            '.$1/$2'
-        );
+            cpfCnpjMask(
 
-        value = value.replace(
-            /(\d{4})(\d)/,
-            '$1-$2'
-        );
+                event.target.value
+
+            );
+
+
 
     }
 
-    return value;
+
+
+
+
+
+
+    if(
+
+        event.target.dataset.field === "telefone"
+
+    ){
+
+
+        event.target.value =
+
+            phoneMask(
+
+                event.target.value
+
+            );
+
+
+
+    }
+
+
 
 }
+
+);
+
+
+
+
+
+
+
+
+
+console.log(
+
+"Helpdesk CAIXA carregado corretamente"
+
+);
