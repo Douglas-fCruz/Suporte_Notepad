@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notepad N1 Pro v2.1</title>
+<style>
+:root{--bg:#0f172a;--sidebar:#111827;--surface:#1e293b;--hover:#334155;--primary:#3b82f6;--success:#22c55e;--text:#f8fafc;--muted:#94a3b8;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;background:var(--bg);color:var(--text);font-family:Segoe UI,sans-serif;overflow:hidden;animation:fadeInUp .45s ease}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#sidebar{width:280px;min-width:180px;max-width:600px;background:var(--sidebar);padding:12px;display:flex;flex-direction:column;gap:10px;border-right:1px solid #334155}
+#resizer{width:6px;background:#334155;cursor:col-resize}
+#resizer:hover{background:var(--primary)}
+#main{flex:1;display:flex;flex-direction:column}
+h3{font-size:12px;color:var(--muted);text-transform:uppercase}
+button{background:var(--surface);color:white;border:none;padding:10px;border-radius:10px;cursor:pointer;transition:.25s ease}
+button:hover{background:var(--hover);transform:translateY(-2px)}
+.note-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);padding:10px;border-radius:10px;margin-bottom:6px}
+.note-item.active{background:var(--primary)}
+.delete-note{background:none;padding:2px 6px}
+#title,#categoryBar,#fields{border-bottom:1px solid #334155}
+#title{padding:12px 18px}
+#categoryBar{padding:10px 18px;display:flex;gap:10px;align-items:center}
+#fields{padding:10px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+input,select{background:var(--surface);color:white;border:1px solid #334155;padding:8px;border-radius:8px}
+textarea{flex:1;background:var(--bg);color:white;border:none;outline:none;padding:20px;font-family:Consolas,monospace}
+#status{background:var(--sidebar);padding:8px 15px;border-top:1px solid #334155;color:var(--muted);display:flex;justify-content:space-between}
+.success{background:var(--success)!important}
+</style>
+</head>
+<body>
+<div id="sidebar">
+<h3>Ações Rápidas</h3>
+<button onclick="novoAtendimento()">➕ Novo Atendimento</button>
+<button id="copyBtn" onclick="copiarTudo()">📋 Copiar Tudo</button>
+<button onclick="limparTexto()">🗑️ Limpar</button>
+<h3>Atendimentos</h3>
+<div id="notes"></div>
+</div>
+
+<div id="resizer"></div>
+
+<div id="main">
+<div id="title">Atendimento 001</div>
+
+<div id="categoryBar">
+<label>Categoria</label>
+<select id="category">
+<option>Lentidão</option>
+<option>Sinal Alto</option>
+<option>Sem Acesso</option>
+<option>Mudança de Endereço</option>
+<option>Mudança de Cômodo</option>
+<option>Ponto Adicional</option>
+</select>
+</div>
+
+<div id="fields">
+<input id="nome" placeholder="NOME">
+<input id="cpf" placeholder="CPF">
+<input id="telefone" placeholder="TELEFONE">
+<input id="protocolo" placeholder="PROTOCOLO">
+<input id="sinal" placeholder="SINAL">
+</div>
+
+<textarea id="editor"></textarea>
+<div id="status"><span id="chars">Caracteres: 0</span><span>Notepad N1 Pro v2.1</span></div>
+</div>
+
+<script>
+let notes=[{
+ title:'Atendimento 001',
+ text:'',
+ categoria:'Lentidão',
+ nome:'',
+ cpf:'',
+ telefone:'',
+ protocolo:'',
+ sinal:''
+}];
+let current=0;
+
+const editor=document.getElementById('editor');
+const category=document.getElementById('category');
+const nome=document.getElementById('nome');
+const cpf=document.getElementById('cpf');
+const telefone=document.getElementById('telefone');
+const protocolo=document.getElementById('protocolo');
+const sinal=document.getElementById('sinal');
+
+function salvarAtual(){
+ const n=notes[current];
+ n.text=editor.value;
+ n.categoria=category.value;
+ n.nome=nome.value;
+ n.cpf=cpf.value;
+ n.telefone=telefone.value;
+ n.protocolo=protocolo.value;
+ n.sinal=sinal.value;
+}
+
+function carregarAtual(){
+ const n=notes[current];
+ editor.value=n.text||'';
+ category.value=n.categoria||'Lentidão';
+ nome.value=n.nome||'';
+ cpf.value=n.cpf||'';
+ telefone.value=n.telefone||'';
+ protocolo.value=n.protocolo||'';
+ sinal.value=n.sinal||'';
+ document.getElementById('title').textContent=n.title;
+ update();
+}
+
+function render(){
+ const box=document.getElementById('notes');
+ box.innerHTML='';
+ notes.forEach((item,i)=>{
+   const row=document.createElement('div');
+   row.className='note-item'+(i===current?' active':'');
+
+   const span=document.createElement('span');
+   span.textContent='📄 '+item.title;
+   span.onclick=()=>abrir(i);
+   row.appendChild(span);
+
+   const del=document.createElement('button');
+   del.className='delete-note';
+   del.textContent='✕';
+   del.onclick=(e)=>{
+      e.stopPropagation();
+      if(notes.length===1)return;
+      if(confirm('Excluir atendimento?')){
+         notes.splice(i,1);
+         current=Math.min(current,notes.length-1);
+         carregarAtual();
+         render();
+      }
+   };
+   row.appendChild(del);
+   box.appendChild(row);
+ });
+}
+
+function abrir(i){
+ salvarAtual();
+ current=i;
+ carregarAtual();
+ render();
+}
+
+function novoAtendimento(){
+ salvarAtual();
+ const id=String(notes.length+1).padStart(3,'0');
+ notes.push({
+   title:'Atendimento '+id,
+   text:'',
+   categoria:'Lentidão',
+   nome:'',
+   cpf:'',
+   telefone:'',
+   protocolo:'',
+   sinal:''
+ });
+ current=notes.length-1;
+ carregarAtual();
+ render();
+}
+
+function copiarTudo(){
+ if(!editor.value.trim()) return;
+ navigator.clipboard.writeText(editor.value);
+ const b=document.getElementById('copyBtn');
+ const t=b.innerHTML;
+ b.classList.add('success');
+ b.innerHTML='✓ Copiado';
+ setTimeout(()=>{
+   b.classList.remove('success');
+   b.innerHTML=t;
+ },1500);
+}
+
+function limparTexto(){
+ if(confirm('Apagar conteúdo atual?')){
+   editor.value='';
+   salvarAtual();
+   update();
+ }
+}
+
+function update(){
+ document.getElementById('chars').textContent='Caracteres: '+editor.value.length;
+}
+
+[editor,category,nome,cpf,telefone,protocolo,sinal].forEach(el=>{
+ el.addEventListener('input',salvarAtual);
+ el.addEventListener('change',salvarAtual);
+});
+
+const sidebar=document.getElementById('sidebar');
+const resizer=document.getElementById('resizer');
+let drag=false;
+resizer.onmousedown=()=>drag=true;
+document.onmouseup=()=>drag=false;
+document.onmousemove=e=>{ if(drag) sidebar.style.width=e.clientX+'px'; };
+
+carregarAtual();
+render();
+</script>
+</body>
+</html>
